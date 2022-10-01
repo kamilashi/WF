@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel='stylesheet' type='text/css' href='style.css'>
+    </head>
+
+    <body onload="startGame()"> 
+        <div class="row">
+            <div class="left column">
+                <h1>World Flip game</h1>
+                <p>Here be instructions</p>
+                
+                <p>Instructions, second part</p>
+
+                <input type="button" value="Generate" onclick="GenerateTable();"><br />
+                 </div>
+            <div class="center column">
+                <h2>Main table</h2>
+                <table id="table">
+                    <script src="renderTable.js"></script>
+                </table>
+
+
+                <h2>Hand</h2>
+                <table id="hand">
+                    <tr id="hr3">
+                        <td id="hcell0" onclick="selectCard(this, 0)"></td>
+                        <td id="hcell1" onclick="selectCard(this, 1)"></td>
+                        <td id="hcell2" onclick="selectCard(this, 2)"></td>
+                        <td id="hcell3" onclick="selectCard(this, 3)"></td>
+                        <td id="hcell4" onclick="selectCard(this, 4)"></td>
+                        <td id="hcell5" onclick="selectCard(this, 5)"></td>
+                    </tr>
+                </table>
+                <div class="bottom">
+                    <h2 id="deckCount"></h2>
+                </div>
+            </div>
+            <div id="prevColumn" class="right column">
+                
+            </div>
+        </div>
+    </body>
+    <script src="set.js"></script>
+</html>
