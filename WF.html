@@ -12,7 +12,7 @@
                 
                 <p>Instructions, second part</p>
 
-                <input type="button" value="Generate" onclick="GenerateTable();"><br />
+                <input type="button" value="Generate" onclick="Init();"><br />
                  </div>
             <div class="center column">
                 <h2>Main table</h2>
@@ -23,14 +23,7 @@
 
                 <h2>Hand</h2>
                 <table id="hand">
-                    <tr id="hr3">
-                        <td id="hcell0" onclick="selectCard(this, 0)"></td>
-                        <td id="hcell1" onclick="selectCard(this, 1)"></td>
-                        <td id="hcell2" onclick="selectCard(this, 2)"></td>
-                        <td id="hcell3" onclick="selectCard(this, 3)"></td>
-                        <td id="hcell4" onclick="selectCard(this, 4)"></td>
-                        <td id="hcell5" onclick="selectCard(this, 5)"></td>
-                    </tr>
+                    
                 </table>
                 <div class="bottom">
                     <h2 id="deckCount"></h2>
@@ -41,5 +34,5 @@
             </div>
         </div>
     </body>
-    <script src="set.js"></script>
+    <script src="game.js"></script>
 </html>

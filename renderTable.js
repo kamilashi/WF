@@ -1,3 +1,7 @@
+function Init(){
+    GenerateTable();
+    GenerateHand();
+}
 
 function GenerateTable(){
 let divTable = document.getElementById('table');
@@ -7,7 +11,7 @@ for(i = 0; i < row; i++)
 {
     str += '<tr id="tr'+i+'">';
     for (j = 0; j < col; j++){
-        str += '<td id="tcell' + i + j + '" onclick="selectCard(this,' + j + ')"></td>';
+        str += '<td id="tcell' + i + j + '" onclick="selectSlot(this,' + j + ')"></td>';
     }
     str += '</tr>';
 }
@@ -18,8 +22,8 @@ table.innerHTML = str;
 
 
 function GenerateHand(){
-            r += parseInt(Math.random() * 10); 
-            g += parseInt(Math.random() * 10); 
-            b += parseInt(Math.random() * 10);
-return 'rgb('+r+','+g+','+b+')';
+    let row = 5;
+    for (j = 0; j < col; j++){
+        str += '<td id="tcell' + i + j + '" onclick="selectCard(this,' + j + ')"></td>';
+    }
 }
