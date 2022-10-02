@@ -6,9 +6,11 @@ var world2;
 var WFDirection = 1; //+1 shift left, -1 shift right
 var player;
 var table;
-//import { tableRows } from './renderTable.js'
-//import { tableColumns } from './renderTable.js'
-//import { handCount } from './renderTable.js'
+
+function updateInstructions(text)
+{
+    document.getElementById("infoText").innerHTML = text;
+}
 const Figures = {                                  //corners: UL     UR     LL       LR
     CORNER_UPPER_LEFT:  [[0,0],[0,1],[1,0]],       //         ▣ □    □ ▣    □        □             00 01 02 03 04
     CORNER_UPPER_RIGHT: [[0,-1],[0,0],[1,0]],      //         □         □    ▣ □   □ ▣             10 11 12 13 14
@@ -59,9 +61,9 @@ class FlipCard extends Card{    //applies to environment
     
     play(curPlayer)
     {   
-        player.state = PlayerStates.SLOT_SELECT;//allow for slot selection
+        curPlayer.state = PlayerStates.SLOT_SELECT;//allow for slot selection
         updateInstructions("Select a center slot");
-        while(!player.selectedSlotCoords[1]){}  //wait until the last one is selected
+        while(!curPlayer.selectedSlotCoords[1]){}  //wait until the last one is selected
         for(let i = 0; i<affectedCoords.length;i++)
         {
             table.flipAll(centerCoordX+affectedCoords[i][0],enterCoordY+affectedCoords[i][1]);
@@ -71,9 +73,9 @@ class FlipCard extends Card{    //applies to environment
 class StatusCard extends Card{    //applies to items/creatures
 
     play(curPlayer){
-        player.state = PlayerStates.SLOT_SELECT;//allow for slot selection
+        curPlayer.state = PlayerStates.SLOT_SELECT;//allow for slot selection
         updateInstructions("Select a slot");
-        while(!player.selectedSlotCoords[1]){}  //wait until the last one is selected
+        while(!curPlayer.selectedSlotCoords[1]){}  //wait until the last one is selected
     }
 }
 
@@ -164,15 +166,15 @@ class Player
     }
     dealCards()
     {
-        console.log(this.hand);
         for(let i=0;i<handCount;i++)
-        {this.hand.push(deck.pop());}
+        {this.hand[i] = deck.pop();}
         updateRender();
     }
     selectCard(index)
     {
-        if(this.state==PlayerStates.CARD_SELECT){this.selectedCardIndex = index;
-            this.state=PlayerStates.PLAYING;
+        if(this.state==PlayerStates.CARD_SELECT)
+        {  this.selectedCardIndex = index;
+           // this.state=PlayerStates.PLAYING;
         }
         else{alert("Cannot select a card yet!");}
         
@@ -187,16 +189,18 @@ class Player
     }
     playTurn()
     {
-        if((this.state==PlayerStates.PLAYING)&&(selectedCardIndex!=null))
+        //if((this.state==PlayerStates.PLAYING)&&(selectedCardIndex!=null))
+        if(this.selectedCardIndex!=null)
         {
-            this.hand[selectedCardIndex].play(this);
-            this.hand.splice(selectedCardIndex);
+            console.log("card: " + this.hand[this.selectedCardIndex]);
+            this.hand[this.selectedCardIndex].play(this);
+            this.hand.splice(this.selectedCardIndex);
             this.selectedCardIndex = null;
             this.selectedSlotCoords = null;
             updateRender();
             this.state = PlayerStates.CARD_SELECT;//change to wait later!
         }
-        else{alert("Not your turn yet! Also a card had to be selected");}
+        else{alert("Not your turn yet! Also a card has to be selected");}
     }
 };
 
@@ -257,8 +261,4 @@ function updateRender()
 
     
 
-    function updateInstructions(text)
-    {
-        document.getElementById("infoText").innerHTML = text;
-    }
 }
