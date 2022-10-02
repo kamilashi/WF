@@ -39,10 +39,12 @@ function DrawTable(row,  col){
 function DrawHand(col){
     let table = document.getElementById('hand');
     str = '';
+    str +='<tr id = "hr0">';
     for (let i = 0; i < col; i++){
-        handCardInd = ''+i;
+        handCardInd[i] = ''+i;
         str += '<td id="hcell' + i + '" onclick="player.selectCard(' + i + ')"></td>';
     }
+    str += '</tr>';
     table.innerHTML = str;
 }
 

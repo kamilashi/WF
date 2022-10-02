@@ -37,8 +37,10 @@ const Figures = {                                  //corners: UL     UR     LL  
   }
 
 class Slot{ 
-    constructor(){
+    constructor(X,Y){
         this.coords = new Array(2);
+        this.coords[0] = X;
+        this.coords[1] = Y;
         this.WI;
         this.env;
         this.content;
@@ -121,9 +123,9 @@ class World{
             this.env[i] = new Array(tableColumns); // make each element an array
             for(let j = 0; j< tableColumns; j++)
             {
-                let color = getRandomInt(3);
-                this.env[i][j] = Colors.color;
-                console.log(color);
+                let colorKey = this.WI;
+                this.env[i][j] = Colors[colorKey];
+                //console.log("setting env "+ this.env[i][j] + " for slot "+  i+","+j);
             }
         }
     }
@@ -140,8 +142,8 @@ table =
         {
             this.slots[i][j] = new Slot(i,j); 
             let WIRandom = getRandomInt(3);
-            console.log('rand int '+WIRandom);
             this.slots[i][j].env = worlds[WIRandom].env[i][j];
+            //console.log("setting env "+ this.slots[i][j].env + " for slot "+  i+","+j);
             this.slots[i][j].content = worlds[WIRandom].creatures[i][j];
         }
     }
@@ -254,7 +256,13 @@ function updateDeckCount() {
 
 function updateRender()
 {
-
+    for(let i = 0;i<tableRows;i++){
+        for(let j=0;j<tableColumns;j++){
+            document.getElementById("tcell"+i+j).style.background = table.slots[i][j].env;
+            //console.log("setting color "+ table.slots[i][j].env + " for slot "+  i+","+j);
+        }
+    }
+    
     updateDeckCount();
 }
   //helper functions:
