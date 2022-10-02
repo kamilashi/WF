@@ -2,22 +2,25 @@
 <html>
     <head>
         <link rel='stylesheet' type='text/css' href='style.css'>
+        <script src ="renderTable.js"></script>
+        <script src ="game.js"></script>
     </head>
 
-    <body onload="startGame()"> 
+    <body> 
         <div class="row">
             <div class="left column">
                 <h1>World Flip game</h1>
                 <p>Here be instructions</p>
                 
-                <p>Instructions, second part</p>
-
+                <p id = "infoText"></p>
+                
                 <input type="button" value="Generate" onclick="Init();"><br />
+                <input type="button" value="Start Game" onclick="initGame();"><br />
+                <input type="button" value="Play Card" onclick="player.playTurn();"><br />
                  </div>
             <div class="center column">
                 <h2>Main table</h2>
                 <table id="table">
-                    <script src="renderTable.js"></script>
                 </table>
 
 
@@ -27,7 +30,7 @@
                     </tr>
                 </table>
                 <div class="bottom">
-                    <h2 id="deckCount"></h2>
+                    <h2 id="deckCount"> Cards in deck: </h2>
                 </div>
             </div>
             <div id="prevColumn" class="right column">
@@ -35,5 +38,5 @@
             </div>
         </div>
     </body>
-    <script src="game.js"></script>
+    
 </html>

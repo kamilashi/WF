@@ -1,10 +1,12 @@
 var slotInd = [];
 var handCardInd = [];
 
+var tableRows = 5;
+var tableColumns = 5;
+var handCount = 5;
+
+
 function Init(){
-    var tableRows = 5;
-    var tableColumns = 5;
-    var handCount = 5;
 
     slotInd = new Array(tableRows); // create an empty array of length tableRows
     for (let i = 0; i < tableRows; i++) {
@@ -27,7 +29,7 @@ function DrawTable(row,  col){
         str += '<tr id="tr'+i+'">';
         for (let j = 0; j < col; j++){
             slotInd[i][j] = ''+i+j;
-            str += '<td id="tcell' + i + j + '" onclick="selectSlot(this,' + j + ')"></td>';
+            str += '<td id="tcell' + i + j + '" onclick="player.selectSlot(' + i +',' + j + ')"></td>';
         }
         str += '</tr>';
     }
@@ -39,7 +41,7 @@ function DrawHand(col){
     str = '';
     for (let i = 0; i < col; i++){
         handCardInd = ''+i;
-        str += '<td id="hcell' + i + '" onclick="selectCard(this,' + i + ')"></td>';
+        str += '<td id="hcell' + i + '" onclick="player.selectCard(' + i + ')"></td>';
     }
     table.innerHTML = str;
 }
