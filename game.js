@@ -11,17 +11,17 @@ function getRandomInt(max) {
     return Math.floor(Math.random() * max);
   }
 
-const Figures = {                                  //corners: UL     UR     LL       LR
-    CORNER_UPPER_LEFT:  [[0,0],[0,1],[1,0]],       //         ▣ □    □ ▣    □        □             00 01 02 03 04
-    CORNER_UPPER_RIGHT: [[0,-1],[0,0],[1,0]],      //         □         □    ▣ □   □ ▣             10 11 12 13 14
-    CORNER_LOWER_LEFT:  [[-1,0],[0,0],[0,1]],      //cross:                                         20 21 32 33 44
-    CORNER_LOWER_RIGHT: [[-1,0],[0,-1],[0,0]],     //                   □                           30 31 32 33 34
-    CROSS: [[-1,0],[0,-1],[0,0],[0,1],[1,0]],      //                 □ ▣ □                        40 41 42 43 44
-    SIDE_LEFT: [[-1,0],[0,-1],[0,0],[1,0]],        //                   □
-    SIDE_RIGHT: [[-1,0],[0,0],[0,1],[-1,0]],       //sides:   L     R        U        L
-    SIDE_UPPER: [[0,-1],[0,0],[0,1],[-1,0]],       //         □     □          
-    SIDE_LOWER: [[-1,0],[0,-1],[0,0],[0,1]],       //       □ ▣    ▣ □    □ ▣ □     □
-  };                                               //         □     □        □      □ ▣ □ 
+const Figures = {                                                           //corners: UL     UR     LL       LR
+    CORNER_UPPER_LEFT:  [[0,0],[0,1],[1,0]],  CORNER_UPPER_LEFT_I: "|¯",    //         ▣ □    □ ▣    □        □             00 01 02 03 04
+    CORNER_UPPER_RIGHT: [[0,-1],[0,0],[1,0]], CORNER_UPPER_RIGHT_I:"¯|",    //         □         □    ▣ □   □ ▣             10 11 12 13 14
+    CORNER_LOWER_LEFT:  [[-1,0],[0,0],[0,1]], CORNER_LOWER_LEFT_I: "|_",    //cross:                                         20 21 32 33 44
+    CORNER_LOWER_RIGHT: [[-1,0],[0,-1],[0,0]],CORNER_LOWER_RIGHT_I:"_|",    //                   □                           30 31 32 33 34
+    CROSS: [[-1,0],[0,-1],[0,0],[0,1],[1,0]],    CROSS_I:"-|-",             //                 □ ▣ □                        40 41 42 43 44
+    SIDE_LEFT: [[-1,0],[0,-1],[0,0],[1,0]],   SIDE_LEFT_I:"-|",             //                   □
+    SIDE_RIGHT: [[-1,0],[0,0],[0,1],[-1,0]],  SIDE_RIGHT_I:"|-",            //sides:   L     R        U        L
+    SIDE_UPPER: [[0,-1],[0,0],[0,1],[-1,0]],  SIDE_UPPER_I:"¯|¯",           //         □     □          
+    SIDE_LOWER: [[-1,0],[0,-1],[0,0],[0,1]],  SIDE_LOWER_I:"_|_"            //       □ ▣    ▣ □    □ ▣ □      □
+  };                                                                        //         □     □        □      □ ▣ □ 
 
   const Colors = 
   { 0: 'white',         //normal world
@@ -54,23 +54,29 @@ class Card {
   }
 
 class FlipCard extends Card{    //applies to environment
-    constructor(figure)
+    constructor(figure,figureIcon)
     {   super();
-        this.figure = figure;
+        this.symbol = figureIcon;
+        console.log("added symbol: "+ this.symbol);
         //this.affectedCoords = new Array(Figures.figure.length);
         this.affectedCoords = JSON.parse(JSON.stringify(figure)); 
     }
-    
-    play(curPlayer)
-    {   
+    activate(curPlayer)
+    {
         curPlayer.state = PlayerStates.SLOT_SELECT;//allow for slot selection
         updateInstructions("Select a slot to place the card");
+        
+    }
+    play(curPlayer)
+    {   
+        if(curPlayer.selectedSlotCoords != null){  //wait until the last one is selected
+       for(let i = 0; i<affectedCoords.length;i++)
+       {
+            table.flipAll(centerCoordX+affectedCoords[i][0],enterCoordY+affectedCoords[i][1]);
+        }
+        updateRender(curPlayer);
         console.log("playing flip card, after update");
-        //while(!curPlayer.selectedSlotCoords[1]){}  //wait until the last one is selected
-       // for(let i = 0; i<affectedCoords.length;i++)
-       // {
-       //     table.flipAll(centerCoordX+affectedCoords[i][0],enterCoordY+affectedCoords[i][1]);
-        //}
+    }
     }
 }
 class StatusCard extends Card{    //applies to items/creatures
@@ -83,9 +89,12 @@ class StatusCard extends Card{    //applies to items/creatures
 }
 
 class SpecialCard extends Card{ //changes rules of the game
-    constructor(dir)                                        //is constructor inherited?
+    constructor(dir,symbol)                                        //is constructor inherited?
     {   super();
-        this.direction = dir;}
+        this.direction = dir;
+        this.symbol = symbol;
+        console.log("added symbol: "+ this.symbol);}
+        
 
     play(){
         if((WFDirection!=this.direction)&&(this.direction!=null))
@@ -172,7 +181,7 @@ class Player
     {
         for(let i=0;i<handCount;i++)
         {this.hand[i] = deck.pop();}
-        updateRender();
+        updateRender(this);
     }
     selectCard(index)
     {
@@ -202,7 +211,7 @@ class Player
             this.hand.splice(this.selectedCardIndex);
             this.selectedCardIndex = null;
             this.selectedSlotCoords = null;
-            updateRender();
+            updateRender(this);
             this.state = PlayerStates.CARD_SELECT;//change to wait later!
         }
         else{alert("Not your turn yet! Also a card has to be selected");}
@@ -223,24 +232,28 @@ function initGame() {
 }
 
 function initializeDeck() {
-card0 = new FlipCard(Figures.CORNER_UPPER_LEFT);
-card1 = new FlipCard(Figures.CORNER_UPPER_RIGHT);
-card2 = new FlipCard(Figures.CORNER_LOWER_LEFT);
-card3 = new FlipCard(Figures.CORNER_LOWER_RIGHT);
+card0 = new FlipCard(Figures.CORNER_UPPER_LEFT, Figures.CORNER_UPPER_LEFT_I);
+card1 = new FlipCard(Figures.CORNER_UPPER_RIGHT,Figures.CORNER_UPPER_RIGHT_I);
+card2 = new FlipCard(Figures.CORNER_LOWER_LEFT,Figures.CORNER_LOWER_LEFT_I);
+card3 = new FlipCard(Figures.CORNER_LOWER_RIGHT,Figures.CORNER_LOWER_RIGHT_I);
 
-card4 = new FlipCard(Figures.CROSS);
+card4 = new FlipCard(Figures.CROSS,Figures.CROSS_I);
 
-card5 = new FlipCard(Figures.SIDE_LEFT);
-card6 = new FlipCard(Figures.SIDE_RIGHT);
-card7 = new FlipCard(Figures.SIDE_UPPER);
-card8 = new FlipCard(Figures.SIDE_LOWER);
+card5 = new FlipCard(Figures.SIDE_LEFT,Figures.SIDE_LEFT_I);
+card6 = new FlipCard(Figures.SIDE_RIGHT,Figures.SIDE_RIGHT_I);
+card7 = new FlipCard(Figures.SIDE_UPPER,Figures.SIDE_UPPER_I);
+card8 = new FlipCard(Figures.SIDE_LOWER,Figures.SIDE_LOWER_I);
 
-card9 = new SpecialCard(1);
-card10 = new SpecialCard(1);
-card11 = new SpecialCard(-1);
-card12 = new SpecialCard(-1);
+card9 = new SpecialCard(1, 1);
+card10 = new SpecialCard(1,+1);
+card11 = new SpecialCard(-1,-1);
+card12 = new SpecialCard(-1,-1);
 
 deck.push(card0,card1,card2,card3,card4,card5,card6,card7,card8,card9,card10,card11,card12);
+
+
+deck.forEach(card => { card.symbol += "\n" + card.constructor.name;});
+
 shuffleArray(deck);
 }
 
@@ -253,8 +266,11 @@ function updateDeckCount() {
 {
      document.getElementById("infoText").innerHTML = "Info: ".concat(text);
 }
-
-function updateRender()
+function updateDirection()
+{
+     document.getElementById("direction").innerHTML = " World Flip Direction: ".concat(WFDirection);
+}
+function updateRender(curPlayer)
 {
     for(let i = 0;i<tableRows;i++){
         for(let j=0;j<tableColumns;j++){
@@ -262,8 +278,14 @@ function updateRender()
             //console.log("setting color "+ table.slots[i][j].env + " for slot "+  i+","+j);
         }
     }
+
+    for(i = 0;i<handCount;i++){
+            document.getElementById("hcell"+i).innerHTML  = curPlayer.hand[i].symbol;
+           // console.log("printing symbols: " + curPlayer.hand[i].symbol);
+        }
     
     updateDeckCount();
+    updateDirection();
 }
   //helper functions:
   function shuffleArray(array) {

@@ -18,7 +18,7 @@ function Init(){
     DrawTable(tableRows,tableColumns);
     DrawHand(handCount);
 
-    console.log(slotInd);
+    //console.log(slotInd);
 }
 
 function DrawTable(row,  col){
