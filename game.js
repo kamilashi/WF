@@ -12,14 +12,14 @@ function getRandomInt(max) {
   }
 
 const Figures = {                                                           //corners: UL     UR     LL       LR
-    CORNER_UPPER_LEFT:  [[0,0],[0,1],[1,0]],  CORNER_UPPER_LEFT_I: "|¯",    //         ▣ □    □ ▣    □        □             00 01 02 03 04
-    CORNER_UPPER_RIGHT: [[0,-1],[0,0],[1,0]], CORNER_UPPER_RIGHT_I:"¯|",    //         □         □    ▣ □   □ ▣             10 11 12 13 14
+    CORNER_UPPER_LEFT:  [[0,0],[0,1],[1,0]],  CORNER_UPPER_LEFT_I: "r",     //         ▣ □    □ ▣    □        □             00 01 02 03 04
+    CORNER_UPPER_RIGHT: [[0,-1],[0,0],[1,0]], CORNER_UPPER_RIGHT_I:"--,",   //         □         □    ▣ □   □ ▣             10 11 12 13 14
     CORNER_LOWER_LEFT:  [[-1,0],[0,0],[0,1]], CORNER_LOWER_LEFT_I: "|_",    //cross:                                         20 21 32 33 44
     CORNER_LOWER_RIGHT: [[-1,0],[0,-1],[0,0]],CORNER_LOWER_RIGHT_I:"_|",    //                   □                           30 31 32 33 34
     CROSS: [[-1,0],[0,-1],[0,0],[0,1],[1,0]],    CROSS_I:"-|-",             //                 □ ▣ □                        40 41 42 43 44
     SIDE_LEFT: [[-1,0],[0,-1],[0,0],[1,0]],   SIDE_LEFT_I:"-|",             //                   □
     SIDE_RIGHT: [[-1,0],[0,0],[0,1],[-1,0]],  SIDE_RIGHT_I:"|-",            //sides:   L     R        U        L
-    SIDE_UPPER: [[0,-1],[0,0],[0,1],[-1,0]],  SIDE_UPPER_I:"¯|¯",           //         □     □          
+    SIDE_UPPER: [[0,-1],[0,0],[0,1],[-1,0]],  SIDE_UPPER_I:"T",             //         □     □          
     SIDE_LOWER: [[-1,0],[0,-1],[0,0],[0,1]],  SIDE_LOWER_I:"_|_"            //       □ ▣    ▣ □    □ ▣ □      □
   };                                                                        //         □     □        □      □ ▣ □ 
 
@@ -50,6 +50,7 @@ class Slot{
 class Card {
     constructor() {
     }
+    activate(curPlayer){}
     play(curPlayer){}
   }
 
@@ -70,9 +71,12 @@ class FlipCard extends Card{    //applies to environment
     play(curPlayer)
     {   
         if(curPlayer.selectedSlotCoords != null){  //wait until the last one is selected
-       for(let i = 0; i<affectedCoords.length;i++)
+            let centerCoordX = curPlayer.selectedSlotCoords[0];
+            let centerCoordY = curPlayer.selectedSlotCoords[1];
+            console.log(this.affectedCoords);
+       for(let i = 0; i<this.affectedCoords.length;i++)
        {
-            table.flipAll(centerCoordX+affectedCoords[i][0],enterCoordY+affectedCoords[i][1]);
+            table.flipAll(centerCoordX+this.affectedCoords[i][0],centerCoordY+this.affectedCoords[i][1]);
         }
         updateRender(curPlayer);
         console.log("playing flip card, after update");
@@ -81,10 +85,12 @@ class FlipCard extends Card{    //applies to environment
 }
 class StatusCard extends Card{    //applies to items/creatures
 
+    activate(curPlayer){
+    curPlayer.state = PlayerStates.SLOT_SELECT;//allow for slot selection
+    updateInstructions("Select a slot");}
+
     play(curPlayer){
-        curPlayer.state = PlayerStates.SLOT_SELECT;//allow for slot selection
-        updateInstructions("Select a slot");
-        while(!curPlayer.selectedSlotCoords[1]){}  //wait until the last one is selected
+        
     }
 }
 
@@ -94,9 +100,11 @@ class SpecialCard extends Card{ //changes rules of the game
         this.direction = dir;
         this.symbol = symbol;
         console.log("added symbol: "+ this.symbol);}
-        
 
-    play(){
+    activate(curPlayer){
+        updateInstructions("You can use the special card.");}
+
+    play(curPlayer){
         if((WFDirection!=this.direction)&&(this.direction!=null))
         {WFDirection=this.direction;}
     }
@@ -151,6 +159,7 @@ table =
         {
             this.slots[i][j] = new Slot(i,j); 
             let WIRandom = getRandomInt(3);
+            this.slots[i][j].WI = WIRandom;
             this.slots[i][j].env = worlds[WIRandom].env[i][j];
             //console.log("setting env "+ this.slots[i][j].env + " for slot "+  i+","+j);
             this.slots[i][j].content = worlds[WIRandom].creatures[i][j];
@@ -159,9 +168,9 @@ table =
  },
  flipAll(coordX, coordY)
     {
-        let currentWI = slots[coordX][coordY].WI;
+        let currentWI = this.slots[coordX][coordY].WI;
         let wcount = worlds.length;
-        newWI = (wcount+currentWI+WFDirection)%wcount;
+        let newWI = (wcount+currentWI+WFDirection)%wcount;
         this.slots[coordX][coordY].WI = newWI;
         this.slots[coordX][coordY].env = worlds[newWI].env[coordX][coordY];
         this.slots[coordX][coordY].content = worlds[newWI].creatures[coordX][coordY];
@@ -188,6 +197,7 @@ class Player
         if(this.state==PlayerStates.CARD_SELECT)
         {  this.selectedCardIndex = index;
             console.log("selected card: " + this.hand[this.selectedCardIndex]);
+            this.hand[this.selectedCardIndex].activate(this);
            // this.state=PlayerStates.PLAYING;
         }
         else{alert("Cannot select a card yet!");}
@@ -204,7 +214,7 @@ class Player
     playTurn()
     {
         //if((this.state==PlayerStates.PLAYING)&&(selectedCardIndex!=null))
-        if(this.selectedCardIndex!=null)
+        if(this.selectedCardIndex!=null)        //add check!
         {
             console.log("card: " + this.hand[this.selectedCardIndex]);
             this.hand[this.selectedCardIndex].play(this);
@@ -213,6 +223,7 @@ class Player
             this.selectedSlotCoords = null;
             updateRender(this);
             this.state = PlayerStates.CARD_SELECT;//change to wait later!
+            console.log("Turn End");
         }
         else{alert("Not your turn yet! Also a card has to be selected");}
     }
@@ -280,7 +291,12 @@ function updateRender(curPlayer)
     }
 
     for(i = 0;i<handCount;i++){
+        
             document.getElementById("hcell"+i).innerHTML  = curPlayer.hand[i].symbol;
+        
+            if(curPlayer.hand[i]==null){
+                document.getElementById("hcell"+i).innerHTML  = "NaN";
+            }
            // console.log("printing symbols: " + curPlayer.hand[i].symbol);
         }
     
