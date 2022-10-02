@@ -7,6 +7,9 @@ var WFDirection = 1; //+1 shift left, -1 shift right
 var player;
 var table;
 
+function getRandomInt(max) {
+    return Math.floor(Math.random() * max);
+  }
 function updateInstructions(text)
 {
     document.getElementById("infoText").innerHTML = text;
@@ -85,7 +88,7 @@ class SpecialCard extends Card{ //changes rules of the game
         this.direction = dir;}
 
     play(){
-        if((WFDirection!=direction)&&(direction!=null))
+        if((WFDirection!=this.direction)&&(this.direction!=null))
         {WFDirection=this.direction;}
     }
 }
@@ -106,7 +109,7 @@ class World{
             this.creatures[i] = new Array(tableColumns); // make each element an array
             for(let j = 0; j< tableColumns; j++)
             {
-                if(Math.floor(Math.random(0,10))%3==0)
+                if(getRandomInt(10)%3==0)//kinda randomly populate
                 {
                     this.creatures[i][j] = 'someCreature from World '+ this.WI + ' at ' + i + ',' + j; 
                 } 
@@ -120,7 +123,7 @@ class World{
             this.env[i] = new Array(tableColumns); // make each element an array
             for(let j = 0; j< tableColumns; j++)
             {
-                let color = Math.floor(Math.random(0,3));
+                let color = getRandomInt(3);
                 this.env[i][j] = Colors.color;
                 console.log(color);
             }
@@ -138,7 +141,8 @@ table =
         for(let j = 0; j< tableColumns; j++)
         {
             this.slots[i][j] = new Slot(i,j); 
-            let WIRandom = Math.floor(Math.random(0,3));
+            let WIRandom = getRandomInt(3);
+            console.log('rand int '+WIRandom);
             this.slots[i][j].env = worlds[WIRandom].env[i][j];
             this.slots[i][j].content = worlds[WIRandom].creatures[i][j];
         }
