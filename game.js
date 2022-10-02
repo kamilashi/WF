@@ -10,10 +10,7 @@ var table;
 function getRandomInt(max) {
     return Math.floor(Math.random() * max);
   }
-function updateInstructions(text)
-{
-    document.getElementById("infoText").innerHTML = text;
-}
+
 const Figures = {                                  //corners: UL     UR     LL       LR
     CORNER_UPPER_LEFT:  [[0,0],[0,1],[1,0]],       //         ▣ □    □ ▣    □        □             00 01 02 03 04
     CORNER_UPPER_RIGHT: [[0,-1],[0,0],[1,0]],      //         □         □    ▣ □   □ ▣             10 11 12 13 14
@@ -65,12 +62,13 @@ class FlipCard extends Card{    //applies to environment
     play(curPlayer)
     {   
         curPlayer.state = PlayerStates.SLOT_SELECT;//allow for slot selection
-        updateInstructions("Select a center slot");
-        while(!curPlayer.selectedSlotCoords[1]){}  //wait until the last one is selected
-        for(let i = 0; i<affectedCoords.length;i++)
-        {
-            table.flipAll(centerCoordX+affectedCoords[i][0],enterCoordY+affectedCoords[i][1]);
-        }
+        updateInstructions("Select a slot to place the card");
+        console.log("playing flip card, after update");
+        //while(!curPlayer.selectedSlotCoords[1]){}  //wait until the last one is selected
+       // for(let i = 0; i<affectedCoords.length;i++)
+       // {
+       //     table.flipAll(centerCoordX+affectedCoords[i][0],enterCoordY+affectedCoords[i][1]);
+        //}
     }
 }
 class StatusCard extends Card{    //applies to items/creatures
@@ -178,6 +176,7 @@ class Player
     {
         if(this.state==PlayerStates.CARD_SELECT)
         {  this.selectedCardIndex = index;
+            console.log("selected card: " + this.hand[this.selectedCardIndex]);
            // this.state=PlayerStates.PLAYING;
         }
         else{alert("Cannot select a card yet!");}
@@ -245,9 +244,13 @@ shuffleArray(deck);
 
 
 function updateDeckCount() {
-    document.getElementById("deckCount").innerHTML = 
-        "Cards in Deck: ".concat(deck.length.toString());
+   document.getElementById("deckCount").innerHTML = "Cards in Deck: ".concat(deck.length.toString());
     }
+
+ function updateInstructions(text)
+{
+     document.getElementById("infoText").innerHTML = "Info: ".concat(text);
+}
 
 function updateRender()
 {
