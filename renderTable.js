@@ -1,5 +1,5 @@
-var slotInd ;
-var handCardInd ;
+var slotInd = [];
+var handCardInd = [];
 
 function Init(){
     var tableRows = 5;
