@@ -20,6 +20,7 @@ table {
 td {
     background-color: white;
     border: 5px solid #bfbfbf;
+    
 }
 
 td {
@@ -33,6 +34,16 @@ ul {
     color: red;
     display: table;
     margin: 0 auto;
+}
+
+.selected 
+{
+    outline: 5px solid blue;
+}
+.square td
+{
+    height: 70px;
+    width: 70px;
 }
 
 .row {
@@ -72,6 +83,15 @@ ul {
 
 #notification {
     color: #bfbfbf;
+}
+#table
+{
+    
+}
+
+#hand
+{
+
 }
 
 #deckCount {

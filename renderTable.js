@@ -26,10 +26,11 @@ function DrawTable(row,  col){
     str = '';
     for(let i = 0; i < row; i++)
     {   
+        
         str += '<tr id="tr'+i+'">';
         for (let j = 0; j < col; j++){
             slotInd[i][j] = ''+i+j;
-            str += '<td id="tcell' + i + j + '" onclick="player.selectSlot(' + i +',' + j + ')"></td>';
+            str += '<td id="tcell' + i + j + '" class = "square" onclick="player.selectSlot(' + i +',' + j + ');"></td>';
         }
         str += '</tr>';
     }

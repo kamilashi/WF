@@ -105,8 +105,7 @@ class SpecialCard extends Card{ //changes rules of the game
         updateInstructions("You can use the special card.");}
 
     play(curPlayer){
-        if((WFDirection!=this.direction)&&(this.direction!=null))
-        {WFDirection=this.direction;}
+        WFDirection=this.direction;
     }
 }
 
@@ -182,7 +181,7 @@ class Player
     constructor()
     {this.health = 100;
      this.hand = new Array(handCount);
-    this.selectedCardIndex = null;
+    this.selectedCardIndex;
     this.selectedSlotCoords = new Array(2);
     this.state = PlayerStates.CARD_SELECT;
     }
@@ -293,19 +292,38 @@ function updateDeckCount() {
 function updateDirection()
 {
     let direcionInfo = "";
-    for (let i = 3; i<3+worlds.length;i+=WFDirection)
-    {
-        let index = i%3;
-        direcionInfo += Colors[index]+" ";
+    switch (WFDirection)
+    {   case 1:
+        for(let i=0;i<worlds.length;i++){
+        direcionInfo += Colors[i]+" "; }
+        break;
+
+        case -1:
+        for(let i=worlds.length-1;i>=0;i--){
+        direcionInfo += Colors[i]+" ";}
+        break;
     }
      document.getElementById("direction").innerHTML = " World Flip Direction: ".concat(WFDirection + ": " + direcionInfo);
 }
-function updateRender(curPlayer)
+function drawOutlineByTag(tag)
 {
+     document.getElementById(tag).classList.add( "selected");
+}
+function removeOutlineByTag(tag)
+{
+     document.getElementById(tag).classList.remove( "selected");
+}
+function updateRender(curPlayer)
+{   
+
     for(let i = 0;i<tableRows;i++){
         for(let j=0;j<tableColumns;j++){
             document.getElementById("tcell"+i+j).style.background = table.slots[i][j].env;
-            //console.log("setting color "+ table.slots[i][j].env + " for slot "+  i+","+j);
+            if((curPlayer.selectedSlotCoords[0]==i)&&(curPlayer.selectedSlotCoords[1]==j))//update slot selection:
+            {
+                drawOutlineByTag("tcell"+i+j);
+            }
+            else{removeOutlineByTag("tcell"+i+j);}
         }
     }
 
@@ -316,7 +334,11 @@ function updateRender(curPlayer)
             if(curPlayer.hand[i]==null){
                 document.getElementById("hcell"+i).innerHTML  = "NaN";
             }
-           // console.log("printing symbols: " + curPlayer.hand[i].symbol);
+
+            if(i==curPlayer.selectedCardIndex) //update card selection:
+            {
+                drawOutlineByTag("hcell"+i);
+            }else{removeOutlineByTag("hcell"+i);}
         }
     
     switch (curPlayer.state) {
