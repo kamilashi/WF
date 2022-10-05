@@ -58,8 +58,7 @@ class FlipCard extends Card{    //applies to environment
     constructor(figure,figureIcon)
     {   super();
         this.symbol = figureIcon;
-        console.log("added symbol: "+ this.symbol);
-        //this.affectedCoords = new Array(Figures.figure.length);
+        //console.log("added symbol: "+ this.symbol);
         this.affectedCoords = JSON.parse(JSON.stringify(figure)); 
     }
     activate(curPlayer)
@@ -73,11 +72,12 @@ class FlipCard extends Card{    //applies to environment
         if(curPlayer.selectedSlotCoords != null){  //wait until the last one is selected
             let centerCoordX = curPlayer.selectedSlotCoords[0];
             let centerCoordY = curPlayer.selectedSlotCoords[1];
-            console.log(this.affectedCoords);
+            //console.log(this.affectedCoords);
        for(let i = 0; i<this.affectedCoords.length;i++)
        {
             table.flipAll(centerCoordX+this.affectedCoords[i][0],centerCoordY+this.affectedCoords[i][1]);
         }
+        updateInstructions(" ");
         updateRender(curPlayer);
         console.log("playing flip card, after update");
     }
@@ -192,16 +192,28 @@ class Player
         {this.hand[i] = deck.pop();}
         updateRender(this);
     }
+    drawCardsToFull()
+    {
+        let cardsToDraw = handCount - this.hand.length;
+        for(let i=0;i<cardsToDraw;i++)
+        {this.hand[i] = deck.pop();}
+        updateRender(this);
+    }
+    drawCards(cardsToDraw)
+    {
+        for(let i=0;i<cardsToDraw;i++)
+        {this.hand[i] = deck.pop();}
+        updateRender(this);
+    }
     selectCard(index)
     {
         if(this.state==PlayerStates.CARD_SELECT)
         {  this.selectedCardIndex = index;
             console.log("selected card: " + this.hand[this.selectedCardIndex]);
             this.hand[this.selectedCardIndex].activate(this);
-           // this.state=PlayerStates.PLAYING;
         }
         else{alert("Cannot select a card yet!");}
-        
+        updateRender(this);
     }
     selectSlot(X,Y)
     {
@@ -209,30 +221,30 @@ class Player
             this.selectedSlotCoords[0] = X;
             this.selectedSlotCoords[1] = Y;
         }
-        
+        updateRender(this);
     }
     playTurn()
     {
         //if((this.state==PlayerStates.PLAYING)&&(selectedCardIndex!=null))
-        if(this.selectedCardIndex!=null)        //add check!
+        if(this.selectedCardIndex!=undefined)        //add check!
         {
             console.log("card: " + this.hand[this.selectedCardIndex]);
             this.hand[this.selectedCardIndex].play(this);
-            this.hand.splice(this.selectedCardIndex);
-            this.selectedCardIndex = null;
-            this.selectedSlotCoords = null;
-            updateRender(this);
+           // this.hand.splice(this.selectedCardIndex);
             this.state = PlayerStates.CARD_SELECT;//change to wait later!
             console.log("Turn End");
+            updateRender(this);
         }
         else{alert("Not your turn yet! Also a card has to be selected");}
     }
 };
 
 function initGame() {
+   
      normalWorld = new World(0);
      world1 = new World(1);
      world2 = new World(2);
+     worlds = [];
     worlds.push(normalWorld,world1,world2);
     player = new Player();
     table.initialize();
@@ -260,6 +272,7 @@ card10 = new SpecialCard(1,+1);
 card11 = new SpecialCard(-1,-1);
 card12 = new SpecialCard(-1,-1);
 
+deck = [];
 deck.push(card0,card1,card2,card3,card4,card5,card6,card7,card8,card9,card10,card11,card12);
 
 
@@ -279,7 +292,13 @@ function updateDeckCount() {
 }
 function updateDirection()
 {
-     document.getElementById("direction").innerHTML = " World Flip Direction: ".concat(WFDirection);
+    let direcionInfo = "";
+    for (let i = 3; i<3+worlds.length;i+=WFDirection)
+    {
+        let index = i%3;
+        direcionInfo += Colors[index]+" ";
+    }
+     document.getElementById("direction").innerHTML = " World Flip Direction: ".concat(WFDirection + ": " + direcionInfo);
 }
 function updateRender(curPlayer)
 {
@@ -290,7 +309,7 @@ function updateRender(curPlayer)
         }
     }
 
-    for(i = 0;i<handCount;i++){
+    for(i = 0;i<curPlayer.hand.length;i++){
         
             document.getElementById("hcell"+i).innerHTML  = curPlayer.hand[i].symbol;
         
@@ -300,6 +319,22 @@ function updateRender(curPlayer)
            // console.log("printing symbols: " + curPlayer.hand[i].symbol);
         }
     
+    switch (curPlayer.state) {
+        case PlayerStates.CARD_SELECT: 
+            updateInstructions("Select a card");
+            break;
+        case PlayerStates.SLOT_SELECT: 
+            updateInstructions("Select a slot");
+            break;
+        case PlayerStates.PLAYING:
+            updateInstructions("Playing your turn");
+            break;
+        case PlayerStates.WAITING:
+            updateInstructions("Waiting for your turn");
+            break;
+    }
+        
+
     updateDeckCount();
     updateDirection();
 }
@@ -311,7 +346,9 @@ function updateRender(curPlayer)
         array[i] = array[j];
         array[j] = temp;
     }
+}
 
+function DebugLog() {
     
-
+    console.log(player);
 }
