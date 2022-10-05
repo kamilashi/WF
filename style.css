@@ -40,10 +40,9 @@ ul {
 {
     outline: 5px solid blue;
 }
-.square td
+.square 
 {
-    height: 70px;
-    width: 70px;
+ 
 }
 
 .row {
@@ -84,9 +83,10 @@ ul {
 #notification {
     color: #bfbfbf;
 }
-#table
+#table td
 {
-    
+    height: 70px;
+    width: 70px;
 }
 
 #hand
