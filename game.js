@@ -19,7 +19,7 @@ const Figures = {                                                           //co
     CROSS: [[-1,0],[0,-1],[0,0],[0,1],[1,0]],    CROSS_I:"-|-",             //                 □ ▣ □                        40 41 42 43 44
     SIDE_LEFT: [[-1,0],[0,-1],[0,0],[1,0]],   SIDE_LEFT_I:"-|",             //                   □
     SIDE_RIGHT: [[-1,0],[0,0],[0,1],[-1,0]],  SIDE_RIGHT_I:"|-",            //sides:   L     R        U        L
-    SIDE_UPPER: [[0,-1],[0,0],[0,1],[-1,0]],  SIDE_UPPER_I:"T",             //         □     □          
+    SIDE_UPPER: [[0,-1],[0,0],[0,1],[1,0]],  SIDE_UPPER_I:"T",             //         □     □          
     SIDE_LOWER: [[-1,0],[0,-1],[0,0],[0,1]],  SIDE_LOWER_I:"_|_"            //       □ ▣    ▣ □    □ ▣ □      □
   };                                                                        //         □     □        □      □ ▣ □ 
 
