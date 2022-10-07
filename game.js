@@ -38,9 +38,10 @@ const Figures = {                                                           //co
 
 class Slot{ 
     constructor(X,Y){
-        this.coords = new Array(2);
-        this.coords[0] = X;
-        this.coords[1] = Y;
+        //this.coords = new Array(2);
+        //this.coords[0] = X;
+        //this.coords[1] = Y;
+        this.coords = new THREE.Vector2(X,Y);
         this.WI;
         this.env;
         this.content;
@@ -70,8 +71,8 @@ class FlipCard extends Card{    //applies to environment
     play(curPlayer)
     {   
         if(curPlayer.selectedSlotCoords != null){  //wait until the last one is selected
-            let centerCoordX = curPlayer.selectedSlotCoords[0];
-            let centerCoordY = curPlayer.selectedSlotCoords[1];
+            let centerCoordX = curPlayer.selectedSlotCoords.x;
+            let centerCoordY = curPlayer.selectedSlotCoords.y;
             //console.log(this.affectedCoords);
        for(let i = 0; i<this.affectedCoords.length;i++)
        {
@@ -182,7 +183,7 @@ class Player
     {this.health = 100;
      this.hand = new Array(handCount);
     this.selectedCardIndex;
-    this.selectedSlotCoords = new Array(2);
+    this.selectedSlotCoords = new THREE.Vector2(0,0);
     this.state = PlayerStates.CARD_SELECT;
     }
     dealCards()
@@ -217,8 +218,8 @@ class Player
     selectSlot(X,Y)
     {
         if(this.state==PlayerStates.SLOT_SELECT){
-            this.selectedSlotCoords[0] = X;
-            this.selectedSlotCoords[1] = Y;
+            this.selectedSlotCoords.x = X;
+            this.selectedSlotCoords.y = Y;
         }
         updateRender(this);
     }
@@ -319,7 +320,7 @@ function updateRender(curPlayer)
     for(let i = 0;i<tableRows;i++){
         for(let j=0;j<tableColumns;j++){
             document.getElementById("tcell"+i+j).style.background = table.slots[i][j].env;
-            if((curPlayer.selectedSlotCoords[0]==i)&&(curPlayer.selectedSlotCoords[1]==j))//update slot selection:
+            if((curPlayer.selectedSlotCoords.x==i)&&(curPlayer.selectedSlotCoords.y==j))//update slot selection:
             {
                 drawOutlineByTag("tcell"+i+j);
             }
