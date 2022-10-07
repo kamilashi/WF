@@ -11,14 +11,14 @@ function getRandomInt(max) {
     return Math.floor(Math.random() * max);
   }
 
-const Figures = {                                                           //corners: UL     UR     LL       LR
+const Shapes = {                                                           //corners: UL     UR     LL       LR
     CORNER_UPPER_LEFT:  [[0,0],[0,1],[1,0]],  CORNER_UPPER_LEFT_I: "r",     //         ▣ □    □ ▣    □        □             00 01 02 03 04
     CORNER_UPPER_RIGHT: [[0,-1],[0,0],[1,0]], CORNER_UPPER_RIGHT_I:"--,",   //         □         □    ▣ □   □ ▣             10 11 12 13 14
     CORNER_LOWER_LEFT:  [[-1,0],[0,0],[0,1]], CORNER_LOWER_LEFT_I: "|_",    //cross:                                         20 21 32 33 44
     CORNER_LOWER_RIGHT: [[-1,0],[0,-1],[0,0]],CORNER_LOWER_RIGHT_I:"_|",    //                   □                           30 31 32 33 34
     CROSS: [[-1,0],[0,-1],[0,0],[0,1],[1,0]],    CROSS_I:"-|-",             //                 □ ▣ □                        40 41 42 43 44
     SIDE_LEFT: [[-1,0],[0,-1],[0,0],[1,0]],   SIDE_LEFT_I:"-|",             //                   □
-    SIDE_RIGHT: [[-1,0],[0,0],[0,1],[-1,0]],  SIDE_RIGHT_I:"|-",            //sides:   L     R        U        L
+    SIDE_RIGHT: [[-1,0],[0,0],[0,1],[1,0]],  SIDE_RIGHT_I:"|-",            //sides:   L     R        U        L
     SIDE_UPPER: [[0,-1],[0,0],[0,1],[1,0]],  SIDE_UPPER_I:"T",             //         □     □          
     SIDE_LOWER: [[-1,0],[0,-1],[0,0],[0,1]],  SIDE_LOWER_I:"_|_"            //       □ ▣    ▣ □    □ ▣ □      □
   };                                                                        //         □     □        □      □ ▣ □ 
@@ -255,17 +255,17 @@ function initGame() {
 }
 
 function initializeDeck() {
-card0 = new FlipCard(Figures.CORNER_UPPER_LEFT, Figures.CORNER_UPPER_LEFT_I);
-card1 = new FlipCard(Figures.CORNER_UPPER_RIGHT,Figures.CORNER_UPPER_RIGHT_I);
-card2 = new FlipCard(Figures.CORNER_LOWER_LEFT,Figures.CORNER_LOWER_LEFT_I);
-card3 = new FlipCard(Figures.CORNER_LOWER_RIGHT,Figures.CORNER_LOWER_RIGHT_I);
+card0 = new FlipCard(Shapes.CORNER_UPPER_LEFT, Shapes.CORNER_UPPER_LEFT_I);
+card1 = new FlipCard(Shapes.CORNER_UPPER_RIGHT,Shapes.CORNER_UPPER_RIGHT_I);
+card2 = new FlipCard(Shapes.CORNER_LOWER_LEFT,Shapes.CORNER_LOWER_LEFT_I);
+card3 = new FlipCard(Shapes.CORNER_LOWER_RIGHT,Shapes.CORNER_LOWER_RIGHT_I);
 
-card4 = new FlipCard(Figures.CROSS,Figures.CROSS_I);
+card4 = new FlipCard(Shapes.CROSS,Shapes.CROSS_I);
 
-card5 = new FlipCard(Figures.SIDE_LEFT,Figures.SIDE_LEFT_I);
-card6 = new FlipCard(Figures.SIDE_RIGHT,Figures.SIDE_RIGHT_I);
-card7 = new FlipCard(Figures.SIDE_UPPER,Figures.SIDE_UPPER_I);
-card8 = new FlipCard(Figures.SIDE_LOWER,Figures.SIDE_LOWER_I);
+card5 = new FlipCard(Shapes.SIDE_LEFT,Shapes.SIDE_LEFT_I);
+card6 = new FlipCard(Shapes.SIDE_RIGHT,Shapes.SIDE_RIGHT_I);
+card7 = new FlipCard(Shapes.SIDE_UPPER,Shapes.SIDE_UPPER_I);
+card8 = new FlipCard(Shapes.SIDE_LOWER,Shapes.SIDE_LOWER_I);
 
 card9 = new SpecialCard(1, 1);
 card10 = new SpecialCard(1,+1);
