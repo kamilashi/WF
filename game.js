@@ -79,17 +79,19 @@ class FlipCard extends Card{    //applies to environment
             table.flipAll(centerCoordX+this.affectedCoords[i][0],centerCoordY+this.affectedCoords[i][1]);
         }
         updateInstructions(" ");
-        updateRender(curPlayer);
+        updateScreen(curPlayer);
         console.log("playing flip card, after update");
     }
     }
 }
 class StatusCard extends Card{    //applies to items/creatures
+    
 
     activate(curPlayer){
     curPlayer.state = PlayerStates.SLOT_SELECT;//allow for slot selection
-    updateInstructions("Select a slot");}
-
+    updateInstructions("Select a slot");
+    updateScreen(curPlayer);}
+    
     play(curPlayer){
         
     }
@@ -103,7 +105,9 @@ class SpecialCard extends Card{ //changes rules of the game
         console.log("added symbol: "+ this.symbol);}
 
     activate(curPlayer){
-        updateInstructions("You can use the special card.");}
+        updateInstructions("You can use the special card.");
+        updateScreen(curPlayer);
+    }
 
     play(curPlayer){
         WFDirection=this.direction;
@@ -190,20 +194,20 @@ class Player
     {
         for(let i=0;i<handCount;i++)
         {this.hand[i] = deck.pop();}
-        updateRender(this);
+        updateScreen(this);
     }
     drawCardsToFull()
     {
         let cardsToDraw = handCount - this.hand.length;
         for(let i=0;i<cardsToDraw;i++)
         {this.hand[i] = deck.pop();}
-        updateRender(this);
+        updateScreen(this);
     }
     drawCards(cardsToDraw)
     {
         for(let i=0;i<cardsToDraw;i++)
         {this.hand[i] = deck.pop();}
-        updateRender(this);
+        updateScreen(this);
     }
     selectCard(index)
     {
@@ -213,7 +217,7 @@ class Player
             this.hand[this.selectedCardIndex].activate(this);
         }
         else{alert("Cannot select a card yet!");}
-        updateRender(this);
+        updateScreen(this);
     }
     selectSlot(X,Y)
     {
@@ -221,7 +225,7 @@ class Player
             this.selectedSlotCoords.x = X;
             this.selectedSlotCoords.y = Y;
         }
-        updateRender(this);
+        updateScreen(this);
     }
     playTurn()
     {
@@ -233,7 +237,7 @@ class Player
            // this.hand.splice(this.selectedCardIndex);
             this.state = PlayerStates.CARD_SELECT;//change to wait later!
             console.log("Turn End");
-            updateRender(this);
+            updateScreen(this);
         }
         else{alert("Not your turn yet! Also a card has to be selected");}
     }
@@ -251,7 +255,7 @@ function initGame() {
     initializeDeck();
     console.log(player);
     player.dealCards();
-    updateRender();
+    updateScreen();
 }
 
 function initializeDeck() {
@@ -314,7 +318,7 @@ function removeOutlineByTag(tag)
 {
      document.getElementById(tag).classList.remove( "selected");
 }
-function updateRender(curPlayer)
+function updateScreen(curPlayer)
 {   
 
     for(let i = 0;i<tableRows;i++){
