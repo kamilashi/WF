@@ -4,24 +4,44 @@
         <link rel='stylesheet' type='text/css' href='style.css'>
         <script src ="renderTable.js"></script>
         <script src ="game.js"></script>
+        <script src ="3D.js"></script>
         <script type="text/javascript" src="lib/three.min.js"> </script>
     </head>
 
     <body> 
         <div class="row">
             <div class="left column">
-                <h1>World Flip game</h1>
+                <h1 class = "leftAlignedText">World Flip game</h1>
                 <p>Here be instructions</p>
 
-                <h3 id = "deckCount">  Cards in Deck: </h3>
-                <h3 id = "direction">  World Flip Direction: </h3>
+                <p id = "deckCount">  Cards in Deck: </p>
+                <p id = "direction">  World Flip Direction: </p>
 
                 <input type="button" value="Generate" onclick="Init();"><br />
                 <input type="button" value="Start Game" onclick="initGame();"><br />
                 <input type="button" value="Play Card" onclick="player.playTurn();"><br />
                 <input type="button" value="Debug Log" onclick="DebugLog();"><br />
-                 </div>
+
+             
+
+             </div>
+
             <div class="center column">
+                <div class="row">
+                    <div class="center">
+                        <canvas id="mycanvas"
+                        style="border: 1px solid;"
+                        width="800"
+                        height="800"> </canvas>
+                    </div>
+                </div>
+                
+
+
+            </div>
+
+
+            <div class="right column">
                 <h2>Main table</h2>
 
                 <table id="table" >
