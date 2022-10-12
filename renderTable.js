@@ -18,6 +18,7 @@ function Init(){
     DrawTable(tableRows,tableColumns);
     DrawHand(handCount);
 
+    initGame();
     //console.log(slotInd);
 }
 

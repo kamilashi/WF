@@ -6,7 +6,7 @@
         <script src ="game.js"></script>
     </head>
 
-    <body> 
+    <body onload="Init();"> 
         <div class="row">
             <div class="left column">
                 <h1 class = "leftAlignedText">World Flip game</h1>
@@ -15,10 +15,10 @@
                 <p id = "deckCount">  Cards in Deck: </p>
                 <p id = "direction">  World Flip Direction: </p>
 
-                <input type="button" value="Generate" onclick="Init();"><br />
-                <input type="button" value="Start Game" onclick="initGame();"><br />
-                <input type="button" value="Play Card" onclick="player.playTurn();"><br />
-                <input type="button" value="Debug Log" onclick="DebugLog();"><br />
+                <input type="button" value="Init 3D" onclick="Init3D();"><br />
+                <input type="button" value="Reset Game" onclick="initGame();"><br />
+                <input type="button" value="Play Card" onclick="player.playTurn();updateScene();"><br />
+                <input type="button" value="Debug Log" onclick="DebugLog3D();"><br />
 
              
 
