@@ -129,10 +129,10 @@ class World{
         for (let i = 0; i < tableRows; i++) {
             this.creatures[i] = new Array(tableColumns); // make each element an array
             for(let j = 0; j< tableColumns; j++)
-            {
-                if(getRandomInt(10)%3==0)//kinda randomly populate
+            {   
+                if(getRandomInt(10)%7==0)//kinda randomly populate
                 {
-                    this.creatures[i][j] = 'someCreature from World '+ this.WI + ' at ' + i + ',' + j; 
+                    this.creatures[i][j] = 'Cr W '+ this.WI + '@' + i + ',' + j; 
                 } 
             }
         }
@@ -323,7 +323,12 @@ function updateScreen(curPlayer)
 
     for(let i = 0;i<tableRows;i++){
         for(let j=0;j<tableColumns;j++){
-            document.getElementById("tcell"+i+j).style.background = table.slots[i][j].env;
+            document.getElementById("tcell"+i+j).style.background = table.slots[i][j].env; //color
+            creature = table.slots[i][j].content;
+            if(creature!=undefined){document.getElementById("tcell"+i+j).innerHTML = creature;}
+            else{document.getElementById("tcell"+i+j).innerHTML = "";}
+            
+
             if((curPlayer.selectedSlotCoords.x==i)&&(curPlayer.selectedSlotCoords.y==j))//update slot selection:
             {
                 drawOutlineByTag("tcell"+i+j);
