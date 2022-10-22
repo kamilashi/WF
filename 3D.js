@@ -61,19 +61,29 @@ function updateScene()
 
 }
 
+function cubeTurnAnimation(i,j)
+{ 
+  console.log('i: ' + i +' j:'+ j);
+  
+  var id = requestAnimationFrame(cubeTurnAnimation);
+  cubes[2][2].rotation.z += 0.03;
+
+  //cancelAnimationFrame( id );
+}
+
 // 1(b) render the scene, i.e. take the contents of the scene and project to canvas using camera parameters
 function render() {
   
   requestAnimationFrame(render);
+  
   controls.update();
   renderer.render(scene, camera);
 }
 
-
-
 render();
 
+
 function DebugLog3D() {
-    
+  cubeTurnAnimation(2,2);
   console.log(table);
 }

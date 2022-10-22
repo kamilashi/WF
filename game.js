@@ -5,6 +5,7 @@ var world1;
 var world2;
 var WFDirection = 1; //+1 shift left, -1 shift right
 var player;
+var AI;
 var table;
 
 function getRandomInt(max) {
@@ -181,6 +182,48 @@ table =
     }
 };
 
+AI = { //to be generalized later
+    health: 100,
+    hand: new Array(handCount),
+    dealCards()
+        {
+            for(let i=0;i<handCount;i++)
+            {this.hand[i] = deck.pop();}
+            updateScreen(player);
+        },
+    drawCardsToFull()
+        {
+            let cardsToDraw = handCount - this.hand.length;
+            for(let i=0;i<cardsToDraw;i++)
+            {this.hand[i] = deck.pop();}
+            updateScreen(player);
+        },
+    playTurn(){
+        console.log("AI plays");
+        updateScreen(player);
+    }
+}
+
+const GameLogic = 
+{
+    worldRespond()
+    {
+        //game makes moves
+        console.log("World response");
+    },
+    
+    gameLoopSinglePlayer()
+    {
+        if(player.state==PlayerStates.WAITING){
+            GameLogic.worldRespond();
+            AI.playTurn();
+            GameLogic.worldRespond();
+            player.state = PlayerStates.CARD_SELECT;
+            updateScreen(player);
+        }
+    },
+}
+
 class Player
 {   
     constructor()
@@ -229,17 +272,18 @@ class Player
     }
     playTurn()
     {
-        //if((this.state==PlayerStates.PLAYING)&&(selectedCardIndex!=null))
-        if(this.selectedCardIndex!=undefined)        //add check!
-        {
-            console.log("card: " + this.hand[this.selectedCardIndex]);
-            this.hand[this.selectedCardIndex].play(this);
-           // this.hand.splice(this.selectedCardIndex);
-            this.state = PlayerStates.CARD_SELECT;//change to wait later!
-            console.log("Turn End");
-            updateScreen(this);
-        }
-        else{alert("Not your turn yet! Also a card has to be selected");}
+        if(this.state!=PlayerStates.WAITING)
+            {if(this.selectedCardIndex!=undefined)        //add check!
+            {
+                console.log("card: " + this.hand[this.selectedCardIndex]);
+                this.hand[this.selectedCardIndex].play(this);
+                this.state = PlayerStates.WAITING;//change to wait later!
+                updateScreen(this);
+            }
+            else{alert("A card has to be selected first");}}
+        else{
+         alert("Wait for your turn"); }
+        
     }
 };
 
@@ -379,6 +423,9 @@ function updateScreen(curPlayer)
         array[j] = temp;
     }
 }
+
+setInterval(GameLogic.gameLoopSinglePlayer,250);
+
 
 function DebugLog() {
     
