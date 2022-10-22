@@ -26,10 +26,10 @@ scene.add(light);
 
 let Models = 
 {
-  creatures : new Array(worlds.length)
-  
+  creatures : new Array(worlds.length),
+  cubes:0
 }
-var cubes;
+//var cubes;
 
 const Materials = 
 {
@@ -39,19 +39,19 @@ creature : new THREE.MeshStandardMaterial({color: 'red'}),
 
 function Init3D()
 {
-  cubes = new Array(tableRows);
+  Models.cubes = new Array(tableRows);
   let z = 0;
   for(let i=0; i<tableRows;i++){ 
-    cubes[i] = new Array(tableColumns);
+    Models.cubes[i] = new Array(tableColumns);
     for(let j=0; j<tableColumns;j++){  
       let cubeGeom =  new THREE.BoxGeometry(1, 1, 1);
       let slotColor = table.slots[i][j].env;
       let cubeMat = new THREE.MeshStandardMaterial({color: slotColor});
-      cubes[i][j] = new THREE.Mesh(cubeGeom, cubeMat);
-      cubes[i][j].position.set(table.slots[i][j].coords.y,z,table.slots[i][j].coords.x);
+      Models.cubes[i][j] = new THREE.Mesh(cubeGeom, cubeMat);
+      Models.cubes[i][j].position.set(table.slots[i][j].coords.y,z,table.slots[i][j].coords.x);
       //cubes[i][j].position.set(i,y_up,j);
   
-      scene.add(cubes[i][j]);
+      scene.add(Models.cubes[i][j]);
     }
   }
 
@@ -80,7 +80,7 @@ function updateScene()
   
       const slotColor = table.slots[i][j].env;
       const newMat = new THREE.MeshStandardMaterial({color: slotColor});
-      cubes[i][j].material = newMat;
+      Models.cubes[i][j].material = newMat;
 
     
 
