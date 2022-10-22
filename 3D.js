@@ -24,10 +24,19 @@ const light = new THREE.PointLight();
 light.position.set(0,10,0);
 scene.add(light);
 
+let Models = 
+{
+  creatures : new Array(worlds.length)
+  
+}
 var cubes;
 
+const Materials = 
+{
+player : new THREE.MeshStandardMaterial({color: 'blue'}),
+creature : new THREE.MeshStandardMaterial({color: 'red'}),
+}
 
-// 5. Create an object made of a geometry and a material
 function Init3D()
 {
   cubes = new Array(tableRows);
@@ -45,30 +54,64 @@ function Init3D()
       scene.add(cubes[i][j]);
     }
   }
+
+  initializeCreatures();
+
+  Models.creatures.forEach(worldCreatures => {
+    worldCreatures.forEach(creatureModel => {
+      scene.add(creatureModel);
+      //console.log(creatureModel);
+    });
+  });
+
+  updateScene();
 }
 
 function updateScene()
 {
+  Models.creatures.forEach(worldCreatures => {
+    worldCreatures.forEach(creatureModel => {
+      creatureModel.visible = false;
+    });
+  });
+
   for(let i=0; i<tableRows;i++){ 
     for(let j=0; j<tableColumns;j++){  
   
-      let slotColor = table.slots[i][j].env;
-      let newMat = new THREE.MeshStandardMaterial({color: slotColor});
+      const slotColor = table.slots[i][j].env;
+      const newMat = new THREE.MeshStandardMaterial({color: slotColor});
       cubes[i][j].material = newMat;
+
+    
+
+      if(table.slots[i][j].content!=undefined) //to-do: separate creatures from other content
+      {
+        let contentIndex = table.slots[i][j].content.index;
+        let worldIndex = table.slots[i][j].WI;
+        Models.creatures[worldIndex][contentIndex].visible = true;
+      }
     }
   }
-  console.log(cubes);
 
 }
 
-function cubeTurnAnimation(i,j)
-{ 
-  console.log('i: ' + i +' j:'+ j);
-  
-  var id = requestAnimationFrame(cubeTurnAnimation);
-  cubes[2][2].rotation.z += 0.03;
 
-  //cancelAnimationFrame( id );
+function initializeCreatures()
+{
+  worlds.forEach(world => {
+    Models.creatures[world.WI] = new Array();
+    for(let i=0; i<tableRows;i++){ 
+      //creature[i] = new Array(tableColumns);
+      for(let j=0; j<tableColumns;j++){  
+        if(world.creatures[i][j]!=undefined){
+          let creatureBall = new THREE.Mesh(new THREE.SphereGeometry(0.3, 32,16), Materials.creature);
+          creatureBall.position.set(j,0.7,i);
+          creatureBall.visible = false;
+          Models.creatures[world.WI].push(creatureBall);
+        }
+      }
+    }
+  });
 }
 
 // 1(b) render the scene, i.e. take the contents of the scene and project to canvas using camera parameters

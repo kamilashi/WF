@@ -115,25 +115,48 @@ class SpecialCard extends Card{ //changes rules of the game
     }
 }
 
+class Creature { //changes rules of the game
+    constructor(X,Y, origin, id) {
+        this.health = 100;
+        this.position = new THREE.Vector2(X,Y);
+        this.nativeWorldIndex= origin;
+        this.paths = new Array(4);
+        this.toString = "cr " + origin +" @ " + X + "," + Y;
+        this.index = id;
+    }
+    attack(curPlayer){}
+    move(coords){
+        this.position.add(coords);
+    }
+    scanForAllPaths(){}
+    defineDirection(){}
+    playTurn(){
+        this.scanForAllPaths();
+        this.defineDirection();
+        this.move();
+    }
+}
+
 class World{
     constructor(WI)
     {
         this.WI = WI;                               
         this.env = new Array(tableRows);             //for now just color
-        this.creatures = new Array(tableRows);       //2 3d matrixes - [x] [y] [creature] 
+        this.creatures = new Array(tableRows);       
         this.generateCreaturesRand();
         this.fillEnv();
     }
 
     generateCreaturesRand()
-    { 
+    { let creatureIndex = 0;
         for (let i = 0; i < tableRows; i++) {
             this.creatures[i] = new Array(tableColumns); // make each element an array
             for(let j = 0; j< tableColumns; j++)
             {   
                 if(getRandomInt(10)%7==0)//kinda randomly populate
                 {
-                    this.creatures[i][j] = 'Cr W '+ this.WI + '@' + i + ',' + j; 
+                    this.creatures[i][j] = new Creature(i,j,this.WI,creatureIndex);//to access - number of creation
+                    creatureIndex++;
                 } 
             }
         }
@@ -226,9 +249,10 @@ const GameLogic =
 
 class Player
 {   
-    constructor()
+    constructor(X,Y)
     {this.health = 100;
      this.hand = new Array(handCount);
+     this.position = new THREE.Vector2(X,Y);
     this.selectedCardIndex;
     this.selectedSlotCoords = new THREE.Vector2(0,0);
     this.state = PlayerStates.CARD_SELECT;
@@ -369,7 +393,7 @@ function updateScreen(curPlayer)
         for(let j=0;j<tableColumns;j++){
             document.getElementById("tcell"+i+j).style.background = table.slots[i][j].env; //color
             creature = table.slots[i][j].content;
-            if(creature!=undefined){document.getElementById("tcell"+i+j).innerHTML = creature;}
+            if(creature!=undefined){document.getElementById("tcell"+i+j).innerHTML = creature.toString;}
             else{document.getElementById("tcell"+i+j).innerHTML = "";}
             
 
