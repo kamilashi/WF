@@ -11,6 +11,11 @@ var table;
 function getRandomInt(max) {
     return Math.floor(Math.random() * max);
   }
+function inRange(num, minEx, maxEx)
+{
+    if((num > minEx)&&(num < maxEx)) {return true;}
+    else{return false;}
+}
 
 const Shapes = {                                                           //corners: UL     UR     LL       LR
     CORNER_UPPER_LEFT:  [[0,0],[0,1],[1,0]],  CORNER_UPPER_LEFT_I: "r",     //         ▣ □    □ ▣    □        □             00 01 02 03 04
@@ -19,8 +24,8 @@ const Shapes = {                                                           //cor
     CORNER_LOWER_RIGHT: [[-1,0],[0,-1],[0,0]],CORNER_LOWER_RIGHT_I:"_|",    //                   □                           30 31 32 33 34
     CROSS: [[-1,0],[0,-1],[0,0],[0,1],[1,0]],    CROSS_I:"-|-",             //                 □ ▣ □                        40 41 42 43 44
     SIDE_LEFT: [[-1,0],[0,-1],[0,0],[1,0]],   SIDE_LEFT_I:"-|",             //                   □
-    SIDE_RIGHT: [[-1,0],[0,0],[0,1],[1,0]],  SIDE_RIGHT_I:"|-",            //sides:   L     R        U        L
-    SIDE_UPPER: [[0,-1],[0,0],[0,1],[1,0]],  SIDE_UPPER_I:"T",             //         □     □          
+    SIDE_RIGHT: [[-1,0],[0,0],[0,1],[1,0]],  SIDE_RIGHT_I:"|-",            //sides:   L      R        U        L
+    SIDE_UPPER: [[0,-1],[0,0],[0,1],[1,0]],  SIDE_UPPER_I:"T",             //         □      □          
     SIDE_LOWER: [[-1,0],[0,-1],[0,0],[0,1]],  SIDE_LOWER_I:"_|_"            //       □ ▣    ▣ □    □ ▣ □      □
   };                                                                        //         □     □        □      □ ▣ □ 
 
@@ -118,20 +123,64 @@ class SpecialCard extends Card{ //changes rules of the game
 class Creature { //changes rules of the game
     constructor(X,Y, origin, id) {
         this.health = 100;
-        this.position = new THREE.Vector2(X,Y);
+        this.position = new THREE.Vector2(X,Y); // table coords: X down, Y to the right
         this.nativeWorldIndex= origin;
-        this.paths = new Array(4);
-        this.toString = "cr " + origin +" @ " + X + "," + Y;
+        this.paths = new Array(1);
+        this.toString = "cr " + origin +" @ " + this.position.x + "," + this.position.y;
         this.index = id;
     }
     attack(curPlayer){}
-    move(coords){
-        this.position.add(coords);
+    move(newCoords){
+        this.position.copy(newCoords);
     }
-    scanForAllPaths(){}
+    createPathTree()
+    {
+        this.scanPath(this.position.x, this.position.y, this.paths, 0);
+    }
+    //direction indexes:
+    //came from the top: 3
+    //came from the left: 2
+    //came from the bottom: 1
+    //came from the right: 4
+    scanPath(originX, originY, parent, cameFromDir) {
+        if((inRange(originX,-1,5))&&(inRange(originY,-1,5))){ //quick hacky check
+
+        parent[0] = new THREE.Vector2(originX, originY);
+        let linkIndex = 0;
+        console.log("parent: " + originX + ", " +  originY);
+        const upperSlotX = originX;
+        const upperSlotY = originY - 1;
+        const rightSlotX = originX + 1;
+        const rightSlotY = originY;
+        const bottomSlotX = originX;
+        const bottomSlotY = originY + 1;
+        const leftSlotX = originX - 1;
+        const leftSlotY = originY;
+        
+        if(cameFromDir != 3){linkIndex = this.checkSlot(upperSlotX,upperSlotY, parent, 1, linkIndex);} //check upper
+        if(cameFromDir != 4){linkIndex = this.checkSlot(rightSlotX,rightSlotY, parent, 2, linkIndex);} //check right
+        if(cameFromDir != 1){linkIndex = this.checkSlot(bottomSlotX,bottomSlotY, parent, 3, linkIndex);} //check bottom
+        if(cameFromDir != 2){linkIndex = this.checkSlot(leftSlotX,leftSlotY, parent, 4, linkIndex);} //check left
+
+        }
+    }
+    checkSlot(X,Y, array,cameFromDir, linkIndex)
+    {
+        console.log("checking " + X + ", " + Y);
+        if((inRange(X,-1,5))&&(inRange(Y,-1,5))){
+        if (table.slots[X][Y].env == Colors[this.nativeWorldIndex]) { // table coords: X down, Y to the right
+            let link = new Array();
+            linkIndex++;
+            array.push(link);
+            console.log("found child: " + X + ", " +  Y + " cololr: " + Colors[this.nativeWorldIndex]);
+            this.scanPath(X, Y, array[linkIndex], cameFromDir);
+        }}
+        
+        return linkIndex;
+    }
     defineDirection(){}
     playTurn(){
-        this.scanForAllPaths();
+        this.createPathTree();
         this.defineDirection();
         this.move();
     }
@@ -147,13 +196,13 @@ class World{
         this.fillEnv();
     }
 
-    generateCreaturesRand()
+    generateCreaturesRand() //generate one for debugging
     { let creatureIndex = 0;
         for (let i = 0; i < tableRows; i++) {
             this.creatures[i] = new Array(tableColumns); // make each element an array
             for(let j = 0; j< tableColumns; j++)
             {   
-                if(getRandomInt(10)%7==0)//kinda randomly populate
+                if(!((i==player.position.X)&&(j==player.position.Y))&&(getRandomInt(10)%7==0))//kinda randomly populate //change to player coords
                 {
                     this.creatures[i][j] = new Creature(i,j,this.WI,creatureIndex);//to access - number of creation
                     creatureIndex++;
@@ -170,7 +219,6 @@ class World{
             {
                 let colorKey = this.WI;
                 this.env[i][j] = Colors[colorKey];
-                //console.log("setting env "+ this.env[i][j] + " for slot "+  i+","+j);
             }
         }
     }
@@ -189,7 +237,6 @@ table =
             let WIRandom = getRandomInt(3);
             this.slots[i][j].WI = WIRandom;
             this.slots[i][j].env = worlds[WIRandom].env[i][j];
-            //console.log("setting env "+ this.slots[i][j].env + " for slot "+  i+","+j);
             this.slots[i][j].content = worlds[WIRandom].creatures[i][j];
         }
     }
@@ -251,8 +298,8 @@ class Player
 {   
     constructor(X,Y)
     {this.health = 100;
-     this.hand = new Array(handCount);
-     this.position = new THREE.Vector2(X,Y);
+    this.hand = new Array(handCount);
+    this.position = new THREE.Vector2(X,Y);
     this.selectedCardIndex;
     this.selectedSlotCoords = new THREE.Vector2(0,0);
     this.state = PlayerStates.CARD_SELECT;
@@ -313,12 +360,12 @@ class Player
 
 function initGame() {
    
+    player = new Player(2,3);
      normalWorld = new World(0);
      world1 = new World(1);
      world2 = new World(2);
      worlds = [];
     worlds.push(normalWorld,world1,world2);
-    player = new Player();
     table.initialize();
     initializeDeck();
     console.log(player);
@@ -453,5 +500,5 @@ setInterval(GameLogic.gameLoopSinglePlayer,250);
 
 function DebugLog() {
     
-    console.log(player);
+    console.log(table);
 }

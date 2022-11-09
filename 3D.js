@@ -26,6 +26,8 @@ scene.add(light);
 
 let Models = 
 {
+  player1:0,
+  player2:0,
   creatures : new Array(worlds.length),
   cubes:0
 }
@@ -56,6 +58,7 @@ function Init3D()
   }
 
   initializeCreatures();
+  initializePlayers();
 
   Models.creatures.forEach(worldCreatures => {
     worldCreatures.forEach(creatureModel => {
@@ -89,6 +92,9 @@ function updateScene()
         let contentIndex = table.slots[i][j].content.index;
         let worldIndex = table.slots[i][j].WI;
         Models.creatures[worldIndex][contentIndex].visible = true;
+        //move to game.js logic later!
+        console.log( table.slots[i][j].content.toString+ " creating path tree...");
+        table.slots[i][j].content.createPathTree();
       }
     }
   }
@@ -114,6 +120,13 @@ function initializeCreatures()
   });
 }
 
+function initializePlayers()
+{
+  Models.player1 = new THREE.Mesh(new THREE.SphereGeometry(0.4, 32,16), Materials.player);
+  Models.player1.position.set(player.position.x,0.7,player.position.y);
+  scene.add(Models.player1);
+}
+
 // 1(b) render the scene, i.e. take the contents of the scene and project to canvas using camera parameters
 function render() {
   
@@ -127,6 +140,5 @@ render();
 
 
 function DebugLog3D() {
-  cubeTurnAnimation(2,2);
   console.log(table);
 }
